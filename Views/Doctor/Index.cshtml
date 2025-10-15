@@ -1,0 +1,156 @@
+@model IEnumerable<Modulo5_3_JhonR.Models.Doctor>
+@using Microsoft.AspNetCore.Http
+
+@{
+    Layout = "_layout";
+}
+
+<div class="d-flex justify-content-between align-items-center mb-3">
+    <button class="btn btn-primary rounded-pill px-4" data-bs-toggle="modal" data-bs-target="#modalNuevoUsuario">
+        <i class="bi bi-person-plus me-2"></i> Nuevo Doctor
+    </button>
+</div>
+
+<div class="modal fade" id="modalNuevoUsuario" tabindex="-1" aria-labelledby="modalNuevoUsuarioLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg modal-dialog-centered">
+        <div class="modal-content border-0 rounded-4 shadow">
+            <div class="modal-header bg-primary text-white">
+                <img src="https://i.ibb.co/Qv3zm29F/image-1759875201459-removebg-preview.png" alt="SuVanCop Logo" style="height:40px;" class="me-2">
+                <h5 class="modal-title fw-bold" id="modalNuevoUsuarioLabel">Registro de Paciente</h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Cerrar"></button>
+            </div>
+            <div class="modal-body">
+                <form asp-action="Create" method="post">
+                    <div class="row g-3">
+                        <div class="col-md-6">
+                            <label class="form-label fw-semibold">Nombres</label>
+                            <input type="text" name="FullName" class="form-control rounded-pill" placeholder="Ingrese nombres" required>
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label fw-semibold">Número de Documento</label>
+                            <input type="text" name="DocumentNumber" class="form-control rounded-pill" placeholder="Ingrese número de documento" required>
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label fw-semibold">Correo</label>
+                            <input type="email" name="Email" class="form-control rounded-pill" placeholder="Ingrese correo electrónico" required>
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label fw-semibold">Especialidad</label>
+                            <select name="Speciality" class="form-select ">
+                                <option value="General">Medicina General</option>
+                                <option value="Cardiologia">Cardiología</option>
+                                <option value="Dermatologia">Dermatología</option>
+                            </select>
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label fw-semibold">Número de Teléfono</label>
+                            <input type="text" name="PhoneNumber" class="form-control rounded-pill" placeholder="Ingrese número de teléfono" required>
+                        </div>
+                        
+                        <!-- Valor fijo para el estado del paciente -->
+                        <input type="hidden" name="Status" value="Activo" />
+                    </div>
+                    <div class="d-grid mt-4">
+                        <button class="btn btn-success rounded-pill">
+                            <i class="bi bi-save me-2"></i> Guardar Información
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<form method="get" asp-action="Index" class="mb-3">
+    <div class="row">
+        <div class="col-md-4">
+            <!-- Usamos DropDownList de Razor en lugar de <select> -->
+            @Html.DropDownList("specialtyFilter", 
+                new SelectList(ViewBag.Specialties, "Value", "Text", ViewBag.SpecialtyFilter), 
+                "Filtrar por especialidad", 
+                new { @class = "form-select rounded-pill", onchange = "this.form.submit()" })
+        </div>
+    </div>
+</form>
+
+
+
+
+
+
+
+
+
+
+
+
+<!-- Tabla de doctores -->
+<div class="card shadow-sm border-0 rounded-4">
+    <div class="card-header bg-secondary text-white fw-bold d-flex justify-content-between align-items-center">
+        <span><i class="bi bi-people-fill me-2"></i> Lista de Doctores</span>
+        <span class="badge bg-light text-dark px-3">@Model.Count() Doctores</span>
+    </div>
+    <div class="card-body">
+        @if (TempData["message"] != null)
+        {
+            <div class="alert alert-success alert-dismissible fade show" role="alert">
+                <i class="bi bi-check-circle-fill me-2"></i> @TempData["message"]
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+            </div>
+        }
+
+        <div class="table-responsive">
+            <table class="table table-bordered table-hover align-middle text-center">
+                <thead class="table-dark">
+                    <tr>
+                        <th>ID</th>
+                        <th>Numero de documento</th>
+                        <th>Nombres</th>
+                        <th>Correo</th>
+                        <th>Teléfono</th>
+                        <th>Especialidad</th>
+                        <th>Estado</th>
+                        <th>Acciones</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var doctor in Model)
+                    {
+                        <tr>
+                            <td>@doctor.Id</td>
+                            <td>@doctor.DocumentNumber</td>
+                            <td>@doctor.FullName</td>
+                            <td>@doctor.Email</td>
+                            <td>@doctor.PhoneNumber</td>
+                            <td>@doctor.Speciality</td>
+                            <td>
+                                <span class="badge @(doctor.Status == "Activo" ? "bg-success" : "bg-danger") px-3">
+                                    @doctor.Status
+                                </span>
+                            </td>
+                            <td>
+                                <div class="d-flex justify-content-center gap-2">
+                                    <a asp-controller="Doctor" asp-action="Details" asp-route-id="@doctor.Id"
+                                       class="btn btn-sm btn-outline-info rounded-pill px-3">
+                                        <i class="bi bi-eye me-1"></i> Detalles
+                                    </a>
+                                    <a asp-action="Edit" asp-route-id="@doctor.Id" asp-controller="Doctor"
+                                       class="btn btn-sm btn-outline-warning rounded-pill px-3">
+                                        <i class="bi bi-pencil-square me-1"></i> Editar
+                                    </a>
+                                    @{
+                                        string estado = doctor.Status == "Activo" ? "Desactivar" : "Activar";
+                                    }
+                                    <a asp-action="Destroy" asp-route-id="@doctor.Id" asp-controller="Doctor"
+                                       class="btn btn-sm btn-outline-danger rounded-pill px-3">
+                                        <i class="bi bi-trash me-1"></i> @estado
+                                    </a>
+                                </div>
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>

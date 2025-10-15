@@ -1,0 +1,27 @@
+@model List<Modulo5_3_JhonR.Models.EmailHistory>
+
+<h2>Historial de Envío de Correos</h2>
+
+<table class="table">
+    <thead>
+    <tr>
+        <th>Correo Destinatario</th>
+        <th>Asunto</th>
+        <th>Estado</th>
+        <th>Fecha de Envío</th>
+        <th>Mensaje de Error</th>
+    </tr>
+    </thead>
+    <tbody>
+    @foreach (var item in Model)
+    {
+        <tr>
+            <td>@item.EmailDestino</td>
+            <td>@item.Asunto</td>
+            <td>@item.Estado</td>
+            <td>@item.FechaEnvio.ToString("dd/MM/yyyy HH:mm:ss")</td>
+            <td>@item.MensajeError</td>
+        </tr>
+    }
+    </tbody>
+</table>
